@@ -1,0 +1,205 @@
+name: Watcher
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"  
+
+jobs:
+  check-and-trigger:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+    
+      #- name: Debug Token
+      #  run: |
+      #   echo "GITHUB_TOKEN: $env:GITHUB_TOKEN"
+          
+      
+      - name: Check Last Run Time
+        #id: check
+        run: |
+        
+          $repo = "philifandem/mando"
+          $workflow_id0 = "revisio0.yml"
+          $workflow_id2 = "revisio2.yml"
+          $workflow_id4 = "revisio4.yml"
+          $workflow_id6 = "revisio6.yml"
+          $workflow_id8 = "revisio8.yml"
+          
+          $headers = @{
+          Authorization = "token $env:GITHUB_TOKEN"
+          }
+          
+          
+          $last_run = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id0/runs?status=success" | Select-Object -ExpandProperty workflow_runs | Select-Object -First 1 -ExpandProperty updated_at
+
+          if ($null -eq $last_run) {
+              echo "wo_0_trigger=true" >> $env:GITHUB_ENV
+          } else {
+              $now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+              $diff = (New-TimeSpan -Start $last_run -End $now).TotalSeconds
+              if ($diff -gt 1200) {
+                  echo "wo_0_trigger=true" >> $env:GITHUB_ENV
+              } else {
+                  echo "wo_0_trigger=false" >> $env:GITHUB_ENV
+              }
+          }
+          
+          sleep 5
+
+          $last_run = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id0/runs?status=success" | Select-Object -ExpandProperty workflow_runs | Select-Object -First 1 -ExpandProperty updated_at
+
+          if ($null -eq $last_run) {
+              echo "wo_2_trigger=true" >> $env:GITHUB_ENV
+          } else {
+              $now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+              $diff = (New-TimeSpan -Start $last_run -End $now).TotalSeconds
+              if ($diff -gt 1200) {
+                  echo "wo_2_trigger=true" >> $env:GITHUB_ENV
+              } else {
+                  echo "wo_2_trigger=false" >> $env:GITHUB_ENV
+              }
+          }
+
+          sleep 5
+
+          $last_run = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id0/runs?status=success" | Select-Object -ExpandProperty workflow_runs | Select-Object -First 1 -ExpandProperty updated_at
+
+          if ($null -eq $last_run) {
+              echo "wo_4_trigger=true" >> $env:GITHUB_ENV
+          } else {
+              $now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+              $diff = (New-TimeSpan -Start $last_run -End $now).TotalSeconds
+              if ($diff -gt 1200) {
+                  echo "wo_4_trigger=true" >> $env:GITHUB_ENV
+              } else {
+                  echo "wo_4_trigger=false" >> $env:GITHUB_ENV
+              }
+          }
+
+
+          sleep 5
+
+          $last_run = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id0/runs?status=success" | Select-Object -ExpandProperty workflow_runs | Select-Object -First 1 -ExpandProperty updated_at
+
+          if ($null -eq $last_run) {
+              echo "wo_6_trigger=true" >> $env:GITHUB_ENV
+          } else {
+              $now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+              $diff = (New-TimeSpan -Start $last_run -End $now).TotalSeconds
+              if ($diff -gt 1200) {
+                  echo "wo_6_trigger=true" >> $env:GITHUB_ENV
+              } else {
+                  echo "wo_6_trigger=false" >> $env:GITHUB_ENV
+              }
+          }
+
+          sleep 5
+
+          $last_run = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id0/runs?status=success" | Select-Object -ExpandProperty workflow_runs | Select-Object -First 1 -ExpandProperty updated_at
+
+          if ($null -eq $last_run) {
+              echo "wo_8_trigger=true" >> $env:GITHUB_ENV
+          } else {
+              $now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+              $diff = (New-TimeSpan -Start $last_run -End $now).TotalSeconds
+              if ($diff -gt 1200) {
+                  echo "wo_8_trigger=true" >> $env:GITHUB_ENV
+              } else {
+                  echo "wo_8_trigger=false" >> $env:GITHUB_ENV
+              }
+          }
+
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure it's referenced like this
+      
+      
+      - name: Trigger Workflow 0
+        if: env.wo_0_trigger == 'true'
+        run: |
+          $repo = "philifandem/mando"
+          $workflow_id = "revisio0.yml"
+          Invoke-RestMethod -Method Post `
+            -Headers @{
+              Authorization = "token $env:GITHUB_TOKEN"
+              Accept = "application/vnd.github.v3+json"
+            } `
+            -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id/dispatches" `
+            -Body '{"ref": "main"}'
+            
+            sleep 90
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        
+
+
+      - name: Trigger Workflow 2
+        if: env.wo_2_trigger == 'true'
+        run: |
+            $repo = "philifandem/mando"
+            $workflow_id = "revisio2.yml"
+            Invoke-RestMethod -Method Post `
+              -Headers @{
+                Authorization = "token $env:GITHUB_TOKEN"
+                Accept = "application/vnd.github.v3+json"
+              } `
+              -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id/dispatches" `
+              -Body '{"ref": "main"}'
+            sleep 90
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}       
+
+      - name: Trigger Workflow 4
+        if: env.wo_4_trigger == 'true'
+        run: |
+            $repo = "philifandem/mando"
+            $workflow_id = "revisio4.yml"
+            Invoke-RestMethod -Method Post `
+              -Headers @{
+                Authorization = "token $env:GITHUB_TOKEN"
+                Accept = "application/vnd.github.v3+json"
+              } `
+              -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id/dispatches" `
+              -Body '{"ref": "main"}'
+            sleep 90
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+
+      - name: Trigger Workflow 6
+        if: env.wo_6_trigger == 'true'
+        run: |
+            $repo = "philifandem/mando"
+            $workflow_id = "revisio6.yml"
+            Invoke-RestMethod -Method Post `
+            -Headers @{
+                Authorization = "token $env:GITHUB_TOKEN"
+                Accept = "application/vnd.github.v3+json"
+             } `
+             -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id/dispatches" `
+             -Body '{"ref": "main"}'
+            sleep 90
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+    
+
+      - name: Trigger Workflow 8
+        if: env.wo_8_trigger == 'true'
+        run: |
+            $repo = "philifandem/mando"
+            $workflow_id = "revisio8.yml"
+            Invoke-RestMethod -Method Post `
+            -Headers @{
+                Authorization = "token $env:GITHUB_TOKEN"
+                Accept = "application/vnd.github.v3+json"
+             } `
+             -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow_id/dispatches" `
+             -Body '{"ref": "main"}'
+            
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+
+  

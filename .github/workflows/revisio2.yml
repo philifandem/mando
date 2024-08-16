@@ -1,0 +1,51 @@
+name: revisio-Runr-2
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Runer 2
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: dependiences
+        run: |
+          pip install pyautogui --quiet
+          pip install pynput --quiet
+          pip install requests --quiet
+          pip install psutil --quiet
+
+
+          
+      #- name: Run rust
+       # run: |
+       #   curl -L -o Urban.exe https://install.urban-vpn.com/UrbanVPN.exe
+       #   certutil -urlcache -split -f "https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe" rust.exe
+       #   start rust.exe
+       #   python login.py
+      
+      - name: TSK
+        run : |
+          #echo %GITHUB_WORKSPACE%
+          echo "Another way to retrieve it: ${{ github.workspace }}"
+          echo "@echo off" > run.bat
+          echo "taskkill /IM provisioner.exe /F" >> run.bat
+          echo "taskkill /IM provjobd.exe /F" >> run.bat
+          echo "CD\" >> run.bat
+          echo "D:" >> run.bat
+          echo "CD ${{ github.workspace }}" >> run.bat
+          echo "python inst.py" >> run.bat
+          type run.bat
+          schtasks /create /tn "MyScheduledTask" /tr "${{ github.workspace }}\run.bat" /sc once /st $(powershell -Command "(Get-Date).AddMinutes(1).ToString('HH:mm')") /f
+
+      - name: Tsk for Next Workflow
+        run : schtasks /create /tn "nextJob" /tr "${{ github.workspace }}\create2.bat" /sc once /st $(powershell -Command "(Get-Date).AddMinutes(10).ToString('HH:mm')") /f
+      
+      
+
+      - name: kill
+        run : taskkill /IM provisioner.exe /F
+
+
+      
+      
